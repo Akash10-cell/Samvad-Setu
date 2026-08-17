@@ -3,3 +3,5 @@ Structure for the backend ->
 MVC -> Model View Controller
 API -> Express JS
 Database -> MongoDB
+
+We will Build our API from here
