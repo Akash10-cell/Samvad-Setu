@@ -1,122 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ComponentLibrary from './pages/dev/ComponentLibrary';
+import Landing from './pages/public/Landing';
+import Login from './pages/public/Login';
+import Signup from './pages/public/Signup';
+import CitizenDashboard from './pages/citizen/CitizenDashboard';
+import SubmitProblem from './pages/citizen/SubmitProblem';
+import ProblemDetail from './pages/public/ProblemDetail';
+import HeiDashboard from './pages/hei/HeiDashboard';
+import HeiProblemReview from './pages/hei/HeiProblemReview';
+import PublicMap from './pages/public/PublicMap';
+import IndustryDashboard from './pages/industry/IndustryDashboard';
+import IndustryBrowse from './pages/industry/IndustryBrowse';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
 
-function App() {
-  const [count, setCount] = useState(0)
 
+// Temporary placeholder wrapper for project pages during Phase 1 setup[cite: 1]
+const PageStub = ({ title, category }) => (
+  <div className="min-h-screen bg-[#0F1B1E] text-[#F2EFE9] p-8">
+    <div className="max-w-4xl mx-auto space-y-4 border border-[#1D3238] p-6 rounded-lg bg-[#16262A]">
+      <span className="text-xs font-mono uppercase tracking-widest text-[#E8A33D] bg-[#E8A33D]/10 px-2 py-1 rounded">
+        {category}
+      </span>
+      <h1 className="text-3xl font-bold font-display">{title}</h1>
+      <p className="text-[#9BA8A6]">
+        Route configured successfully. Implement page components inside <code className="text-[#2F9E8F]">src/pages/</code>.
+      </p>
+    </div>
+  </div>
+);
+
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <Routes>
+        {/* Design System Preview Route (Section 0.2)[cite: 1] */}
+        <Route path="/dev/components" element={<ComponentLibrary />} />
 
-      <div className="ticks"></div>
+        {/* Public Module Routes (Section 1)[cite: 1] */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/how-it-works" element={<PageStub title="How It Works" category="Public (P1)" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/map" element={<PublicMap />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Citizen Module Routes (Section 1)[cite: 1] */}
+        <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
+        <Route path="/citizen/submit" element={<SubmitProblem />} />
+        <Route path="/problem/:id" element={<ProblemDetail />} />
+        <Route path="/citizen/notifications" element={<PageStub title="Citizen Notifications" category="Citizen (P1)" />} />
+        <Route path="/citizen/profile" element={<PageStub title="Citizen Profile / Settings" category="Citizen (P2)" />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* HEI / Faculty Module Routes (Section 1)[cite: 1] */}
+        <Route path="/hei/dashboard" element={<HeiDashboard />} />
+        <Route path="/hei/review" element={<HeiProblemReview />} />
+        <Route path="/hei/team-formation" element={<PageStub title="Team Formation" category="Faculty/HEI Admin (P1)" />} />
+        <Route path="/hei/workspace" element={<PageStub title="Project Workspace" category="Faculty / Students (P0)" />} />
+        <Route path="/hei/analytics" element={<PageStub title="HEI Analytics" category="Faculty/HEI Admin (P2)" />} />
+
+        {/* Industry / CSR Module Routes (Section 1)[cite: 1] */}
+        <Route path="/industry/dashboard" element={<IndustryDashboard />} />
+        <Route path="/industry/browse" element={<IndustryBrowse />} />
+        <Route path="/industry/pledge" element={<PageStub title="Pledge Support Flow" category="Industry (P0)" />} />
+        <Route path="/industry/csr-report" element={<PageStub title="CSR Compliance Report" category="Industry (P1)" />} />
+
+        {/* Government / DHTE Module Routes (Section 1)[cite: 1] */}
+        <Route path="/admin/analytics" element={<AdminAnalytics />} />
+        <Route path="/admin/moderation" element={<PageStub title="Problem Moderation Queue" category="DHTE Admin (P1)" />} />
+        <Route path="/admin/institutions" element={<PageStub title="Institution & Industry Management" category="DHTE Admin (P2)" />} />
+
+        {/* Fallback 404 Route[cite: 1] */}
+        <Route path="*" element={<PageStub title="404 - Page Not Found" category="Public (P1)" />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App

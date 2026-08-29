@@ -1,0 +1,149 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { MapPin, Calendar, Building2, ShieldCheck, ArrowLeft, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useProblemStore } from '../../store/problemStore';
+import SignalDot from '../../components/ui/SignalDot';
+import Badge from '../../components/ui/Badge';
+import Button from '../../components/ui/Button';
+
+export default function ProblemDetail() {
+  const { id } = useParams();
+  const { problems, fetchProblems } = useProblemStore();
+  const [problem, setProblem] = useState(null);
+
+  useEffect(() => {
+    if (problems.length === 0) {
+      fetchProblems();
+    } else {
+      const found = problems.find((p) => p.id === id);
+      setProblem(found || problems[0]); // Fallback to first problem if direct ID match isn't found
+    }
+  }, [id, problems]);
+
+  if (!problem) {
+    return (
+      <div className="min-h-screen bg-[#0F1B1E] text-[#F2EFE9] flex items-center justify-center">
+        <p className="text-[#9BA8A6]">Loading problem details...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0F1B1E] text-[#F2EFE9] p-6 max-w-5xl mx-auto space-y-8">
+      {/* Top Header & Navigation */}
+      <div className="flex items-center justify-between border-b border-[#1D3238] pb-4">
+        <Link to="/citizen/dashboard" className="inline-flex items-center gap-2 text-xs font-mono text-[#9BA8A6] hover:text-[#F2EFE9] transition-colors">
+          <ArrowLeft size={16} /> Back to Dashboard
+        </Link>
+        <span className="text-xs font-mono text-[#E8A33D] bg-[#E8A33D]/10 px-2 py-1 rounded">
+          ID: {problem.id}
+        </span>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8">
+        {/* Left 2 Columns: Details & Timeline */}
+        <div className="md:col-span-2 space-y-8">
+          {/* Main Title & Overview */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <SignalDot status={problem.status} size="lg" />
+              <Badge status={problem.status} />
+              <span className="text-xs font-mono text-[#9BA8A6]">
+                Urgency: <strong className="text-[#E8A33D] uppercase">{problem.urgency || 'Medium'}</strong>
+              </span>
+            </div>
+
+            <h1 className="text-3xl font-bold font-display">{problem.title}</h1>
+
+            <div className="flex flex-wrap items-center gap-4 text-xs text-[#9BA8A6]">
+              <span className="flex items-center gap-1">
+                <MapPin size={14} className="text-[#E8A33D]" /> {problem.location?.district || "Jharkhand"}, {problem.location?.block || "Block"}
+              </span>
+              <span className="flex items-center gap-1">
+                <Calendar size={14} /> Reported on {new Date(problem.createdAt || Date.now()).toLocaleDateString()}
+              </span>
+            </div>
+
+            <p className="text-sm text-[#9BA8A6] leading-relaxed bg-[#16262A] p-4 rounded-xl border border-[#1D3238]">
+              {problem.description}
+            </p>
+          </div>
+
+          {/* Life Cycle Audit Timeline (Section 3.7) */}
+          <div className="space-y-4 bg-[#16262A] p-6 rounded-xl border border-[#1D3238]">
+            <h2 className="text-lg font-bold font-display flex items-center gap-2">
+              <Sparkles size={18} className="text-[#2F9E8F]" /> Resolution Audit Timeline
+            </h2>
+
+            <div className="relative border-l-2 border-[#1D3238] ml-3 pl-6 space-y-6">
+              {(problem.timeline || [
+                { stage: "Reported", timestamp: "Recent", actor: "Citizen" },
+                { stage: "Classified", timestamp: "Recent", actor: "AI Engine" }
+              ]).map((item, index) => (
+                <div key={index} className="relative space-y-1">
+                  {/* Timeline Dot */}
+                  <div className="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-[#2F9E8F] border-4 border-[#0F1B1E]" />
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-[#F2EFE9]">{item.stage}</h4>
+                    <span className="text-xs font-mono text-[#9BA8A6]">{item.timestamp}</span>
+                  </div>
+                  <p className="text-xs text-[#9BA8A6]">Action performed by: <span className="text-[#E8A33D]">{item.actor}</span></p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Institutional Ownership & Role Actions */}
+        <div className="space-y-6">
+          {/* Assigned HEI Card */}
+          <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+            <h3 className="text-xs font-mono text-[#9BA8A6] uppercase tracking-wider">Assigned Technical Partner</h3>
+            {problem.assignedInstitution ? (
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Building2 size={24} className="text-[#2F9E8F] shrink-0 mt-1" />
+                  <div>
+                    <h4 className="text-sm font-bold">{problem.assignedInstitution}</h4>
+                    <p className="text-xs text-[#9BA8A6]">Verification status: Verified HEI</p>
+                  </div>
+                </div>
+                <div className="p-3 bg-[#0F1B1E] rounded-lg border border-[#1D3238] text-xs space-y-1">
+                  <p className="text-[#9BA8A6]">Project Lead: <strong className="text-[#F2EFE9]">Student Team Alpha</strong></p>
+                  <p className="text-[#9BA8A6]">Faculty Advisor: <strong className="text-[#F2EFE9]">Dr. A. Sharma</strong></p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 text-center py-2">
+                <p className="text-xs text-[#9BA8A6]">Unclaimed by higher educational institutions.</p>
+                <Link to="/signup?role=university">
+                  <Button variant="outline" className="w-full text-xs py-2">Claim as University</Button>
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* CSR Support Card */}
+          <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+            <h3 className="text-xs font-mono text-[#9BA8A6] uppercase tracking-wider">CSR Sponsorship</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#9BA8A6]">Required Budget:</span>
+                <span className="font-mono font-bold text-[#E8A33D]">₹45,000</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#9BA8A6]">Pledged So Far:</span>
+                <span className="font-mono font-bold text-[#2F9E8F]">₹15,000</span>
+              </div>
+              <Link to="/signup?role=industry">
+                <Button variant="secondary" className="w-full text-xs py-2 mt-2">
+                  <Award size={14} /> Pledge CSR Funds
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
