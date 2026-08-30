@@ -1,19 +1,19 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ComponentLibrary from './pages/dev/ComponentLibrary';
-import Landing from './pages/public/Landing';
-import Login from './pages/public/Login';
-import Signup from './pages/public/Signup';
-import CitizenDashboard from './pages/citizen/CitizenDashboard';
-import SubmitProblem from './pages/citizen/SubmitProblem';
-import ProblemDetail from './pages/public/ProblemDetail';
-import HeiDashboard from './pages/hei/HeiDashboard';
-import HeiProblemReview from './pages/hei/HeiProblemReview';
-import PublicMap from './pages/public/PublicMap';
-import IndustryDashboard from './pages/industry/IndustryDashboard';
-import IndustryBrowse from './pages/industry/IndustryBrowse';
-import AdminAnalytics from './pages/admin/AdminAnalytics';
-
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ComponentLibrary from "./pages/dev/ComponentLibrary";
+import Landing from "./pages/public/Landing";
+import Login from "./pages/public/Login";
+import Signup from "./pages/public/Signup";
+import CitizenDashboard from "./pages/citizen/CitizenDashboard";
+import SubmitProblem from "./pages/citizen/SubmitProblem";
+import ProblemDetail from "./pages/public/ProblemDetail";
+import HeiDashboard from "./pages/hei/HeiDashboard";
+import HeiProblemReview from "./pages/hei/HeiProblemReview";
+import PublicMap from "./pages/public/PublicMap";
+import IndustryDashboard from "./pages/industry/IndustryDashboard";
+import IndustryBrowse from "./pages/industry/IndustryBrowse";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import Toast from "./components/ui/Toast";
 
 // Temporary placeholder wrapper for project pages during Phase 1 setup[cite: 1]
 const PageStub = ({ title, category }) => (
@@ -24,7 +24,8 @@ const PageStub = ({ title, category }) => (
       </span>
       <h1 className="text-3xl font-bold font-display">{title}</h1>
       <p className="text-[#9BA8A6]">
-        Route configured successfully. Implement page components inside <code className="text-[#2F9E8F]">src/pages/</code>.
+        Route configured successfully. Implement page components inside{" "}
+        <code className="text-[#2F9E8F]">src/pages/</code>.
       </p>
     </div>
   </div>
@@ -33,13 +34,17 @@ const PageStub = ({ title, category }) => (
 export default function App() {
   return (
     <BrowserRouter>
+      <Toast />ß
       <Routes>
         {/* Design System Preview Route (Section 0.2)[cite: 1] */}
         <Route path="/dev/components" element={<ComponentLibrary />} />
 
         {/* Public Module Routes (Section 1)[cite: 1] */}
         <Route path="/" element={<Landing />} />
-        <Route path="/how-it-works" element={<PageStub title="How It Works" category="Public (P1)" />} />
+        <Route
+          path="/how-it-works"
+          element={<PageStub title="How It Works" category="Public (P1)" />}
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/map" element={<PublicMap />} />
@@ -48,29 +53,94 @@ export default function App() {
         <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
         <Route path="/citizen/submit" element={<SubmitProblem />} />
         <Route path="/problem/:id" element={<ProblemDetail />} />
-        <Route path="/citizen/notifications" element={<PageStub title="Citizen Notifications" category="Citizen (P1)" />} />
-        <Route path="/citizen/profile" element={<PageStub title="Citizen Profile / Settings" category="Citizen (P2)" />} />
+        <Route
+          path="/citizen/notifications"
+          element={
+            <PageStub title="Citizen Notifications" category="Citizen (P1)" />
+          }
+        />
+        <Route
+          path="/citizen/profile"
+          element={
+            <PageStub
+              title="Citizen Profile / Settings"
+              category="Citizen (P2)"
+            />
+          }
+        />
 
         {/* HEI / Faculty Module Routes (Section 1)[cite: 1] */}
         <Route path="/hei/dashboard" element={<HeiDashboard />} />
         <Route path="/hei/review" element={<HeiProblemReview />} />
-        <Route path="/hei/team-formation" element={<PageStub title="Team Formation" category="Faculty/HEI Admin (P1)" />} />
-        <Route path="/hei/workspace" element={<PageStub title="Project Workspace" category="Faculty / Students (P0)" />} />
-        <Route path="/hei/analytics" element={<PageStub title="HEI Analytics" category="Faculty/HEI Admin (P2)" />} />
+        <Route
+          path="/hei/team-formation"
+          element={
+            <PageStub
+              title="Team Formation"
+              category="Faculty/HEI Admin (P1)"
+            />
+          }
+        />
+        <Route
+          path="/hei/workspace"
+          element={
+            <PageStub
+              title="Project Workspace"
+              category="Faculty / Students (P0)"
+            />
+          }
+        />
+        <Route
+          path="/hei/analytics"
+          element={
+            <PageStub title="HEI Analytics" category="Faculty/HEI Admin (P2)" />
+          }
+        />
 
         {/* Industry / CSR Module Routes (Section 1)[cite: 1] */}
         <Route path="/industry/dashboard" element={<IndustryDashboard />} />
         <Route path="/industry/browse" element={<IndustryBrowse />} />
-        <Route path="/industry/pledge" element={<PageStub title="Pledge Support Flow" category="Industry (P0)" />} />
-        <Route path="/industry/csr-report" element={<PageStub title="CSR Compliance Report" category="Industry (P1)" />} />
+        <Route
+          path="/industry/pledge"
+          element={
+            <PageStub title="Pledge Support Flow" category="Industry (P0)" />
+          }
+        />
+        <Route
+          path="/industry/csr-report"
+          element={
+            <PageStub title="CSR Compliance Report" category="Industry (P1)" />
+          }
+        />
 
         {/* Government / DHTE Module Routes (Section 1)[cite: 1] */}
         <Route path="/admin/analytics" element={<AdminAnalytics />} />
-        <Route path="/admin/moderation" element={<PageStub title="Problem Moderation Queue" category="DHTE Admin (P1)" />} />
-        <Route path="/admin/institutions" element={<PageStub title="Institution & Industry Management" category="DHTE Admin (P2)" />} />
+        <Route
+          path="/admin/moderation"
+          element={
+            <PageStub
+              title="Problem Moderation Queue"
+              category="DHTE Admin (P1)"
+            />
+          }
+        />
+        <Route
+          path="/admin/institutions"
+          element={
+            <PageStub
+              title="Institution & Industry Management"
+              category="DHTE Admin (P2)"
+            />
+          }
+        />
 
         {/* Fallback 404 Route[cite: 1] */}
-        <Route path="*" element={<PageStub title="404 - Page Not Found" category="Public (P1)" />} />
+        <Route
+          path="*"
+          element={
+            <PageStub title="404 - Page Not Found" category="Public (P1)" />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
