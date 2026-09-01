@@ -141,8 +141,9 @@ Content-Type: application/json
 
 | Method    | Endpoint                     | Access Level                           | Description                                                      | Status         |
 | --------- | ---------------------------- | -------------------------------------- | ---------------------------------------------------------------- | -------------- |
-| **GET**   | `/api/problems/public`       | Public                                 | Retrieves a static list of public problems                       | ⚠️ Placeholder |
-| **POST**  | `/api/problems`              | Private _(Citizen only)_               | Submits a new problem or report to the platform                  | ⚠️ Pending DB  |
+| **GET**   | `/api/problems/public`       | Public                                 | Retrieves all civic problems from the database                   | 🟢 Live MongoDB |
+| **POST**  | `/api/problems`              | Private _(Citizen only)_               | Submits a new problem or report to the platform                  | 🟢 Live MongoDB |
+| **DELETE**| `/api/problems/:id`          | Private _(Citizen only)_               | Deletes a problem (only if the authenticated user is the owner)  | 🟢 Live MongoDB |
 | **POST**  | `/api/problems/:id/claim`    | Private _(HEI, HEI Admin)_             | Allows an institution to claim a specific problem for resolution | ⚠️ Placeholder |
 | **PATCH** | `/api/problems/:id/moderate` | Private _(Govt Admin, Platform Admin)_ | Updates the lifecycle status of a reported problem               | ⚠️ Placeholder |
 
