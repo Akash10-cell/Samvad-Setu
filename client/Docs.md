@@ -21,6 +21,7 @@ This document provides a comprehensive guide for the SICP (Samvad-Setu Citizen I
 - [Key Components](#key-components)
 - [Environment Configuration](#environment-configuration)
 - [Development Guidelines](#development-guidelines)
+- [Agentic Workflow Updates](#agentic-workflow-updates)
 
 ---
 
@@ -127,9 +128,10 @@ Manages user authentication state and operations.
 
 | Method   | Parameters          | Returns            | Description                           |
 | -------- | ------------------- | ------------------ | ------------------------------------- |
-| `login`  | `email`, `password` | `Promise<boolean>` | Authenticate user and store JWT token |
-| `signup` | `userData`          | `Promise<boolean>` | Register new user with provided role  |
-| `logout` | None                | `void`             | Clear user session and token          |
+| `login`        | `email`, `password` | `Promise<boolean>` | Authenticate user and store JWT token |
+| `signup`       | `userData`          | `Promise<boolean>` | Register new user with provided role  |
+| `logout`       | None                | `Promise<void>`    | Call backend logout and clear session |
+| `fetchProfile` | None                | `Promise<Object>`  | Fetch latest user profile from API    |
 
 **Usage Example:**
 
@@ -268,6 +270,7 @@ api.interceptors.request.use((config) => {
 | -------- | ---------------- | ------- | -------------------------------------------------------------- | ---------------------- |
 | **POST** | `/auth/register` | Yes     | `{ name, email, password, role, institutionName, department }` | `{ _id, token, user }` |
 | **POST** | `/auth/login`    | Yes     | `{ email, password }`                                          | `{ _id, token, user }` |
+| **POST** | `/auth/logout`   | No      | None                                                           | `{ message }`          |
 | **GET**  | `/auth/me`       | No      | None                                                           | `{ user }`             |
 
 #### Problem Management Endpoints
@@ -439,3 +442,27 @@ export default function MyComponent() {
 - [ ] Integrate DigiLocker SSO
 - [ ] Add comprehensive form validation
 - [ ] Implement real-time notifications
+
+---
+
+## Agentic Workflow Updates
+
+The following components and layouts were recently added via an Agentic Workflow:
+
+### 1. Sidebar Layout (`src/components/layout/SidebarLayout.jsx`)
+- Introduced a unified layout wrapper providing a persistent sidebar for the Citizen module.
+- Includes responsive navigation (hides on mobile) and integrates the user's profile.
+- Contains a Logout action that clears the session and triggers a global toast notification upon success.
+
+### 2. Profile Page (`src/pages/citizen/Profile.jsx`)
+- Replaced the temporary profile stub.
+- Displays detailed user information (Name, Email, Phone, Address, Organization) mapped from the global `authStore`.
+- Features an aesthetic avatar card with a "Verified Account" badge.
+- Added a dedicated Logout button in the Account Security section that triggers a global toast notification.
+
+### 3. Settings Page (`src/pages/citizen/Settings.jsx`)
+- Introduced a dedicated settings interface for managing user preferences.
+- Includes custom animated toggle switches for Notifications (Email, SMS), Privacy, and Appearance (Dark Mode).
+
+### 4. Routing Updates (`src/App.jsx`)
+- Refactored `App.jsx` to group the Citizen routes (`/citizen/dashboard`, `/citizen/submit`, `/citizen/notifications`, `/citizen/profile`, `/citizen/settings`) under the `SidebarLayout`.

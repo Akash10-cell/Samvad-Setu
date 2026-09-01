@@ -96,4 +96,15 @@ router.get("/me", protect, async (req, res) => {
   }
 });
 
+router.post("/logout", protect, async (req, res) => {
+  try {
+    // In a stateless JWT setup, true secure logout would require a token blacklist.
+    // Here we provide the endpoint to allow the client to confirm intent,
+    // and for future extensibility (like audit logging or token invalidation).
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 module.exports = router;

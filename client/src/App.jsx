@@ -14,6 +14,9 @@ import IndustryDashboard from "./pages/industry/IndustryDashboard";
 import IndustryBrowse from "./pages/industry/IndustryBrowse";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import Toast from "./components/ui/Toast";
+import SidebarLayout from "./components/layout/SidebarLayout";
+import Profile from "./pages/citizen/Profile";
+import Settings from "./pages/citizen/Settings";
 
 // Temporary placeholder wrapper for project pages during Phase 1 setup[cite: 1]
 const PageStub = ({ title, category }) => (
@@ -34,7 +37,7 @@ const PageStub = ({ title, category }) => (
 export default function App() {
   return (
     <BrowserRouter>
-      <Toast />ß
+      <Toast />
       <Routes>
         {/* Design System Preview Route (Section 0.2)[cite: 1] */}
         <Route path="/dev/components" element={<ComponentLibrary />} />
@@ -50,24 +53,21 @@ export default function App() {
         <Route path="/map" element={<PublicMap />} />
 
         {/* Citizen Module Routes (Section 1)[cite: 1] */}
-        <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
-        <Route path="/citizen/submit" element={<SubmitProblem />} />
+        <Route element={<SidebarLayout />}>
+          <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
+          <Route path="/citizen/submit" element={<SubmitProblem />} />
+          <Route
+            path="/citizen/notifications"
+            element={
+              <PageStub title="Citizen Notifications" category="Citizen (P1)" />
+            }
+          />
+          <Route path="/citizen/profile" element={<Profile />} />
+          <Route path="/citizen/settings" element={<Settings />} />
+        </Route>
+        
+        {/* Public view of problem (not in dashboard layout) */}
         <Route path="/problem/:id" element={<ProblemDetail />} />
-        <Route
-          path="/citizen/notifications"
-          element={
-            <PageStub title="Citizen Notifications" category="Citizen (P1)" />
-          }
-        />
-        <Route
-          path="/citizen/profile"
-          element={
-            <PageStub
-              title="Citizen Profile / Settings"
-              category="Citizen (P2)"
-            />
-          }
-        />
 
         {/* HEI / Faculty Module Routes (Section 1)[cite: 1] */}
         <Route path="/hei/dashboard" element={<HeiDashboard />} />
