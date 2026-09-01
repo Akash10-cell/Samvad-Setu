@@ -1,17 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { MapPin, Calendar, Building2, ShieldCheck, ArrowLeft, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { MapPin, Calendar, Building2, ShieldCheck, ArrowLeft, Award, Sparkles, CheckCircle2, Trash2 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useProblemStore } from '../../store/problemStore';
+import { useToastStore } from '../../store/toastStore';
 import SignalDot from '../../components/ui/SignalDot';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 
 export default function ProblemDetail() {
   const { id } = useParams();
-  const { problems, fetchProblems } = useProblemStore();
+  const navigate = useNavigate();
+  const { problems, fetchProblems, deleteProblem } = useProblemStore();
   const { user } = useAuthStore();
+  const { showToast } = useToastStore();
   const [problem, setProblem] = useState(null);
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this problem?")) {
+      const success = await deleteProblem(id);
+      if (success) {
+        showToast("Problem deleted successfully.", "success");
+        navigate('/citizen/dashboard');
+      }
+    }
+  };
 
   useEffect(() => {
     if (problems.length === 0) {
@@ -64,7 +77,18 @@ export default function ProblemDetail() {
               </span>
             </div>
 
-            <h1 className="text-3xl font-bold font-display">{problem.title}</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold font-display">{problem.title}</h1>
+              {user && (user.id === problem.reportedBy?._id || user.id === problem.reportedBy?.id || user.id === problem.reportedBy) && (
+                <Button 
+                  variant="outline" 
+                  className="border-red-900/50 text-red-400 hover:bg-red-400/10 hover:border-red-400 flex items-center gap-2 text-xs py-2 px-3" 
+                  onClick={handleDelete}
+                >
+                  <Trash2 size={14} /> Delete
+                </Button>
+              )}
+            </div>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-[#9BA8A6]">
               <span className="flex items-center gap-1">

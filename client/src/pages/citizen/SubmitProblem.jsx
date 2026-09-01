@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, MapPin, Sparkles, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useProblemStore } from '../../store/problemStore';
+import { useToastStore } from '../../store/toastStore';
+import { motion } from 'framer-motion';
 import Button from '../../components/ui/Button';
 
 export default function SubmitProblem() {
@@ -17,6 +19,9 @@ export default function SubmitProblem() {
     urgency: 'medium',
     category: 'Infrastructure & Safety',
     imageUploaded: false,
+    mediaUrls: [],
+    lat: 23.3441,
+    lng: 85.3096,
   });
 
   // Simulated AI Engine Auto-Classification (Section 3.6)
@@ -30,17 +35,51 @@ export default function SubmitProblem() {
     setStep(4);
   };
 
+
+  const { showToast } = useToastStore();
+
+  const handleGetLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData(prev => ({ ...prev, lat: position.coords.latitude, lng: position.coords.longitude }));
+          showToast("Location updated successfully", "success");
+        },
+        (error) => showToast("Failed to get location. Please enable GPS.", "error")
+      );
+    } else {
+      showToast("Geolocation not supported by this browser.", "error");
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, imageUploaded: true, mediaUrls: [reader.result] }));
+        showToast("Image processed successfully", "success");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async () => {
     const created = await addProblem({
       title: formData.title,
       description: formData.description,
       category: formData.category,
       urgency: formData.urgency,
-      location: { district: formData.district, block: formData.block, lat: 23.3441, lng: 85.3096 },
+      location: { district: formData.district, block: formData.block, lat: formData.lat, lng: formData.lng },
+      mediaUrls: formData.mediaUrls,
     });
     
-    // Redirect to Problem Timeline Detail (Section 3.6)
-    navigate(`/problem/${created.id}`);
+    if (created) {
+      showToast("Problem reported successfully!", "success");
+      navigate(`/problem/${created.id}`);
+    } else {
+      showToast("Failed to submit problem.", "error");
+    }
   };
 
   return (
@@ -63,7 +102,7 @@ export default function SubmitProblem() {
 
       {/* STEP 1: Basic Information */}
       {step === 1 && (
-        <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
           <h2 className="text-lg font-bold font-display">1. Issue Information</h2>
           <div className="space-y-1">
             <label className="text-xs font-mono text-[#9BA8A6]">Problem Title</label>
@@ -91,12 +130,12 @@ export default function SubmitProblem() {
           <Button variant="primary" className="w-full py-2.5" onClick={() => setStep(2)}>
             Continue to Location <ArrowRight size={16} />
           </Button>
-        </div>
+        </motion.div>
       )}
 
       {/* STEP 2: Location Selector */}
       {step === 2 && (
-        <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
           <h2 className="text-lg font-bold font-display">2. Pin Location</h2>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
@@ -119,13 +158,16 @@ export default function SubmitProblem() {
             </div>
           </div>
 
-          <div className="p-8 border border-dashed border-[#1D3238] rounded-lg bg-[#0F1B1E] text-center space-y-2">
+          
+          <div className="p-6 border border-dashed border-[#1D3238] rounded-lg bg-[#0F1B1E] text-center space-y-3">
             <MapPin className="mx-auto text-[#E8A33D]" size={32} />
             <p className="text-xs text-[#9BA8A6]">Interactive Map Picker (GPS Auto-Location)</p>
-            <span className="text-xs font-mono text-[#2F9E8F] bg-[#2F9E8F]/10 px-2 py-1 rounded">
-              GPS Lat: 23.3441, Lng: 85.3096
+            <span className="block text-xs font-mono text-[#2F9E8F] bg-[#2F9E8F]/10 px-2 py-1 rounded w-max mx-auto mb-2">
+              GPS Lat: {formData.lat.toFixed(4)}, Lng: {formData.lng.toFixed(4)}
             </span>
+            <Button variant="outline" className="text-xs" onClick={handleGetLocation}>Use Current Location</Button>
           </div>
+
 
           <div className="flex gap-3">
             <Button variant="outline" className="w-full" onClick={() => setStep(1)}>
@@ -135,18 +177,27 @@ export default function SubmitProblem() {
               Continue to Media <ArrowRight size={16} />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* STEP 3: Media Upload */}
       {step === 3 && (
-        <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
           <h2 className="text-lg font-bold font-display">3. Upload Photos / Evidence</h2>
-          <div className="p-8 border-2 border-dashed border-[#1D3238] hover:border-[#E8A33D] rounded-xl bg-[#0F1B1E] text-center space-y-3 cursor-pointer">
-            <Camera className="mx-auto text-[#9BA8A6]" size={36} />
-            <p className="text-sm font-semibold">Click or drag photos to upload</p>
-            <p className="text-xs text-[#9BA8A6]">Supports JPG, PNG up to 10MB</p>
-          </div>
+          
+          <label className="p-8 border-2 border-dashed border-[#1D3238] hover:border-[#E8A33D] rounded-xl bg-[#0F1B1E] text-center space-y-3 cursor-pointer block transition-colors">
+            <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+            {formData.imageUploaded ? (
+              <img src={formData.mediaUrls[0]} alt="Preview" className="mx-auto h-32 object-cover rounded-lg" />
+            ) : (
+              <>
+                <Camera className="mx-auto text-[#9BA8A6]" size={36} />
+                <p className="text-sm font-semibold">Click to select photo</p>
+                <p className="text-xs text-[#9BA8A6]">Supports JPG, PNG up to 10MB</p>
+              </>
+            )}
+          </label>
+
 
           <div className="flex gap-3">
             <Button variant="outline" className="w-full" onClick={() => setStep(2)}>
@@ -156,12 +207,12 @@ export default function SubmitProblem() {
               Run AI Engine Check <Sparkles size={16} />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* STEP 4: AI Classification Preview */}
       {step === 4 && (
-        <div className="bg-[#16262A] p-6 rounded-xl border border-[#2F9E8F] space-y-4">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="bg-[#16262A] p-6 rounded-xl border border-[#2F9E8F] space-y-4">
           <div className="flex items-center gap-2 text-[#2F9E8F]">
             <Sparkles size={20} />
             <h2 className="text-lg font-bold font-display">4. AI Analysis & Routing Preview</h2>
@@ -190,12 +241,12 @@ export default function SubmitProblem() {
               Review & Submit <ArrowRight size={16} />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* STEP 5: Final Review & Confirmation */}
       {step === 5 && (
-        <div className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="bg-[#16262A] p-6 rounded-xl border border-[#1D3238] space-y-4">
           <h2 className="text-lg font-bold font-display">5. Review Your Report</h2>
           <div className="p-4 bg-[#0F1B1E] rounded-lg space-y-2 text-xs">
             <p><strong className="text-[#9BA8A6]">Title:</strong> {formData.title}</p>
@@ -211,7 +262,7 @@ export default function SubmitProblem() {
               {isLoading ? 'Submitting...' : 'Confirm Submission'} <CheckCircle size={16} />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

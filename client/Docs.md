@@ -481,3 +481,14 @@ The following components and layouts were recently added via an Agentic Workflow
 ### 7. Bug Fix: Problem Detail Routing
 - Fixed a dynamic routing bug in `ProblemDetail.jsx` where the "Back to Dashboard" button hardcoded a redirect to `/citizen/dashboard`.
 - The back link is now dynamically computed based on `user.role`, ensuring Government Admins and other stakeholders return to their proper dashboards.
+
+### 8. Live Database Integration (`src/store/problemStore.js`)
+- Completely refactored the Problem Management system to use live MongoDB data instead of mock placeholders.
+- `problemStore.js` now uses the authenticated Axios `api` instance to perform `GET /api/problems/public`, `POST /api/problems`, and `DELETE /api/problems/:id` requests.
+- Integrated a new **Delete** feature directly into the `ProblemDetail.jsx` view. The Delete button conditionally renders *only* if the currently authenticated Citizen is the original author of the problem.
+
+### 9. Submit Problem UI/UX Overhaul
+- **Smooth Animations**: Integrated `framer-motion` to wrap all multi-step form transitions in buttery-smooth `<motion.div>` slide and fade animations, making it feel like a premium mobile app.
+- **Live Geolocation**: Replaced the static GPS display with a "Use Current Location" button that leverages the browser's `navigator.geolocation` API to retrieve actual latitude and longitude coordinates.
+- **Media Uploads**: Implemented a functional `<input type="file" />` that securely reads images as Base64 DataURLs. It dynamically renders a sleek preview thumbnail of the selected photo directly in the form.
+- **Dynamic Toasts**: Hooked into `useToastStore` to provide instant, beautiful feedback messages when a location is fetched, an image is processed, a problem is successfully submitted, or a problem is securely deleted.

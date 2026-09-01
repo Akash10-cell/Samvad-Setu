@@ -69,8 +69,10 @@ export default function App() {
           </Route>
         </Route>
         
-        {/* Public view of problem (not in dashboard layout) */}
-        <Route path="/problem/:id" element={<ProblemDetail />} />
+        {/* Public view of problem (wrapped in Sidebar for dynamic role UI) */}
+        <Route element={<SidebarLayout />}>
+          <Route path="/problem/:id" element={<ProblemDetail />} />
+        </Route>
 
         {/* HEI / Faculty Module Routes (Section 1)[cite: 1] */}
         <Route path="/hei/dashboard" element={<HeiDashboard />} />
