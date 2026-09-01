@@ -48,9 +48,33 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  logout: () => {
-    localStorage.removeItem("token");
-    // Important: Also clear session row on backend later
-    set({ user: null, token: null });
+  logout: async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      console.error("Backend logout failed:", error);
+    } finally {
+      localStorage.removeItem("token");
+      set({ user: null, token: null });
+    }
+  },
+
+  fetchProfile: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get("/auth/me");
+      set({ user: response.data, isLoading: false });
+      return response.data;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Failed to fetch profile",
+        isLoading: false,
+      });
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        set({ user: null, token: null });
+      }
+      return null;
+    }
   },
 }));

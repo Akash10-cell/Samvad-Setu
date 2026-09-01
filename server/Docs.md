@@ -122,6 +122,7 @@ The server will start on `http://localhost:5000`
 | -------- | -------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
 | **POST** | `/api/auth/register` | Public                          | Registers a new user. Valid roles: `citizen`, `hei`, `industry_csr`, `government_admin` |
 | **POST** | `/api/auth/login`    | Public                          | Authenticates a user and returns JWT token + user profile                               |
+| **POST** | `/api/auth/logout`   | Private _(Authenticated users)_ | Terminates user session (requires client-side token deletion)                           |
 | **GET**  | `/api/auth/me`       | Private _(Authenticated users)_ | Retrieves the current logged-in user's profile data                                     |
 
 **Authentication Headers:**
