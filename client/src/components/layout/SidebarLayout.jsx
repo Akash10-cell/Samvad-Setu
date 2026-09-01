@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, User, Settings as SettingsIcon, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, User, Settings as SettingsIcon, LogOut, Menu, ShieldCheck, Building2, Briefcase } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useToastStore } from '../../store/toastStore';
 
@@ -16,11 +16,40 @@ export default function SidebarLayout() {
     navigate('/login');
   };
 
-  const navItems = [
-    { name: 'Dashboard', path: '/citizen/dashboard', icon: LayoutDashboard },
-    { name: 'Profile', path: '/citizen/profile', icon: User },
-    { name: 'Settings', path: '/citizen/settings', icon: SettingsIcon },
-  ];
+  const getNavItems = () => {
+    const role = user?.role || 'citizen';
+    const items = [];
+    
+    if (role === 'government_admin' || role === 'admin' || role === 'govt_admin' || role === 'platform_admin') {
+      items.push({ name: 'Admin Analytics', path: '/admin/analytics', icon: ShieldCheck });
+    } else if (role === 'hei' || role === 'hei_admin') {
+      items.push({ name: 'HEI Dashboard', path: '/hei/dashboard', icon: Building2 });
+    } else if (role === 'industry_csr' || role === 'industry_admin') {
+      items.push({ name: 'Industry Dashboard', path: '/industry/dashboard', icon: Briefcase });
+    } else {
+      items.push({ name: 'Dashboard', path: '/citizen/dashboard', icon: LayoutDashboard });
+    }
+    
+    let basePath = '/citizen';
+    if (role === 'government_admin' || role === 'admin' || role === 'govt_admin' || role === 'platform_admin') basePath = '/admin';
+    else if (role === 'hei' || role === 'hei_admin') basePath = '/hei';
+    else if (role === 'industry_csr' || role === 'industry_admin') basePath = '/industry';
+
+    items.push({ name: 'Profile', path: `${basePath}/profile`, icon: User });
+    items.push({ name: 'Settings', path: `${basePath}/settings`, icon: SettingsIcon });
+    
+    return items;
+  };
+
+  const getPortalTitle = () => {
+    const role = user?.role || 'citizen';
+    if (role === 'government_admin' || role === 'admin' || role === 'govt_admin' || role === 'platform_admin') return 'Government Portal';
+    if (role === 'hei' || role === 'hei_admin') return 'HEI Portal';
+    if (role === 'industry_csr' || role === 'industry_admin') return 'Industry Portal';
+    return 'Citizen Portal';
+  };
+
+  const navItems = getNavItems();
 
   return (
     <div className="min-h-screen bg-[#0F1B1E] text-[#F2EFE9] flex">
@@ -28,7 +57,7 @@ export default function SidebarLayout() {
       <aside className="w-64 bg-[#16262A] border-r border-[#1D3238] hidden md:flex flex-col">
         <div className="p-6 border-b border-[#1D3238]">
           <h2 className="text-2xl font-bold font-display text-[#E8A33D]">Samvad Setu</h2>
-          <p className="text-xs text-[#9BA8A6] mt-1 tracking-wider uppercase">Citizen Portal</p>
+          <p className="text-xs text-[#9BA8A6] mt-1 tracking-wider uppercase">{getPortalTitle()}</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">

@@ -466,3 +466,18 @@ The following components and layouts were recently added via an Agentic Workflow
 
 ### 4. Routing Updates (`src/App.jsx`)
 - Refactored `App.jsx` to group the Citizen routes (`/citizen/dashboard`, `/citizen/submit`, `/citizen/notifications`, `/citizen/profile`, `/citizen/settings`) under the `SidebarLayout`.
+- Integrated `ProtectedRoute` wrappers around all module routes to enforce client-side role-based access control (RBAC).
+
+### 5. Role-Based Access Control (`src/components/layout/ProtectedRoute.jsx`)
+- Created a robust React Router wrapper that verifies JWT authentication and validates `user.role` against an `allowedRoles` array.
+- Automatically redirects unauthorized users (e.g., a citizen trying to access `/admin/analytics`) to their designated dashboard or the login page.
+- Resolves the refresh-state bug by asynchronously fetching the user profile via `authStore` if a token is present but the user data is null.
+
+### 6. Dynamic Admin Sidebar Layout
+- Refactored `SidebarLayout.jsx` to dynamically render navigation items and portal titles based on the authenticated user's role.
+- Government Admins now see "Admin Analytics", while Citizens see "Dashboard", all within the same unified layout and aesthetic.
+- Profile and Settings pages are securely reused across modules (e.g., `/admin/profile`) to ensure DRY principles.
+
+### 7. Bug Fix: Problem Detail Routing
+- Fixed a dynamic routing bug in `ProblemDetail.jsx` where the "Back to Dashboard" button hardcoded a redirect to `/citizen/dashboard`.
+- The back link is now dynamically computed based on `user.role`, ensuring Government Admins and other stakeholders return to their proper dashboards.

@@ -148,6 +148,17 @@ Content-Type: application/json
 
 ---
 
+### 🛡️ Admin & Government Routes
+
+**Base Path:** `/api/admin`  
+**File Location:** `routes/adminRoutes.js`
+
+| Method    | Endpoint                     | Access Level                           | Description                                                      |
+| --------- | ---------------------------- | -------------------------------------- | ---------------------------------------------------------------- |
+| **GET**   | `/api/admin/verify`          | Private _(Govt Admin, Platform Admin)_ | Verifies strict admin access via RBAC middleware                 |
+
+---
+
 ## Development Notes
 
 - 📌 All private routes require valid JWT in `Authorization` header

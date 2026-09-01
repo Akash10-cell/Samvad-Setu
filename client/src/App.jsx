@@ -15,6 +15,7 @@ import IndustryBrowse from "./pages/industry/IndustryBrowse";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import Toast from "./components/ui/Toast";
 import SidebarLayout from "./components/layout/SidebarLayout";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 import Profile from "./pages/citizen/Profile";
 import Settings from "./pages/citizen/Settings";
 
@@ -53,17 +54,19 @@ export default function App() {
         <Route path="/map" element={<PublicMap />} />
 
         {/* Citizen Module Routes (Section 1)[cite: 1] */}
-        <Route element={<SidebarLayout />}>
-          <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
-          <Route path="/citizen/submit" element={<SubmitProblem />} />
-          <Route
-            path="/citizen/notifications"
-            element={
-              <PageStub title="Citizen Notifications" category="Citizen (P1)" />
-            }
-          />
-          <Route path="/citizen/profile" element={<Profile />} />
-          <Route path="/citizen/settings" element={<Settings />} />
+        <Route element={<ProtectedRoute allowedRoles={['citizen']} />}>
+          <Route element={<SidebarLayout />}>
+            <Route path="/citizen/dashboard" element={<CitizenDashboard />} />
+            <Route path="/citizen/submit" element={<SubmitProblem />} />
+            <Route
+              path="/citizen/notifications"
+              element={
+                <PageStub title="Citizen Notifications" category="Citizen (P1)" />
+              }
+            />
+            <Route path="/citizen/profile" element={<Profile />} />
+            <Route path="/citizen/settings" element={<Settings />} />
+          </Route>
         </Route>
         
         {/* Public view of problem (not in dashboard layout) */}
@@ -114,25 +117,31 @@ export default function App() {
         />
 
         {/* Government / DHTE Module Routes (Section 1)[cite: 1] */}
-        <Route path="/admin/analytics" element={<AdminAnalytics />} />
-        <Route
-          path="/admin/moderation"
-          element={
-            <PageStub
-              title="Problem Moderation Queue"
-              category="DHTE Admin (P1)"
+        <Route element={<ProtectedRoute allowedRoles={['government_admin', 'admin', 'govt_admin', 'platform_admin']} />}>
+          <Route element={<SidebarLayout />}>
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/profile" element={<Profile />} />
+            <Route path="/admin/settings" element={<Settings />} />
+            <Route
+              path="/admin/moderation"
+              element={
+                <PageStub
+                  title="Problem Moderation Queue"
+                  category="DHTE Admin (P1)"
+                />
+              }
             />
-          }
-        />
-        <Route
-          path="/admin/institutions"
-          element={
-            <PageStub
-              title="Institution & Industry Management"
-              category="DHTE Admin (P2)"
+            <Route
+              path="/admin/institutions"
+              element={
+                <PageStub
+                  title="Institution & Industry Management"
+                  category="DHTE Admin (P2)"
+                />
+              }
             />
-          }
-        />
+          </Route>
+        </Route>
 
         {/* Fallback 404 Route[cite: 1] */}
         <Route

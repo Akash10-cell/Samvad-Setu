@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, Calendar, Building2, ShieldCheck, ArrowLeft, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 import { useProblemStore } from '../../store/problemStore';
 import SignalDot from '../../components/ui/SignalDot';
 import Badge from '../../components/ui/Badge';
@@ -9,6 +10,7 @@ import Button from '../../components/ui/Button';
 export default function ProblemDetail() {
   const { id } = useParams();
   const { problems, fetchProblems } = useProblemStore();
+  const { user } = useAuthStore();
   const [problem, setProblem] = useState(null);
 
   useEffect(() => {
@@ -32,7 +34,16 @@ export default function ProblemDetail() {
     <div className="min-h-screen bg-[#0F1B1E] text-[#F2EFE9] p-6 max-w-5xl mx-auto space-y-8">
       {/* Top Header & Navigation */}
       <div className="flex items-center justify-between border-b border-[#1D3238] pb-4">
-        <Link to="/citizen/dashboard" className="inline-flex items-center gap-2 text-xs font-mono text-[#9BA8A6] hover:text-[#F2EFE9] transition-colors">
+        <Link 
+          to={(() => {
+            const role = user?.role;
+            if (role === "hei" || role === "hei_admin") return "/hei/dashboard";
+            if (role === "industry_csr" || role === "industry_admin") return "/industry/dashboard";
+            if (role === "government_admin" || role === "admin" || role === "govt_admin" || role === "platform_admin") return "/admin/analytics";
+            return "/citizen/dashboard";
+          })()}
+          className="inline-flex items-center gap-2 text-xs font-mono text-[#9BA8A6] hover:text-[#F2EFE9] transition-colors"
+        >
           <ArrowLeft size={16} /> Back to Dashboard
         </Link>
         <span className="text-xs font-mono text-[#E8A33D] bg-[#E8A33D]/10 px-2 py-1 rounded">
